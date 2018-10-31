@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/sfg_qa
+    username: ENC(aNsGFTnPqy7S8BEX3GfqZ0UbbECNKdhZ)
+    password: ENC(YNicwVCcJYElCBVnwpI7CUV7nrlenUm5)
+    platform: mysql
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database: mysql
+    show-sql: true
+jasypt:
+  encryptor:
+    password: hammad85
+string: qa
+#    properties:
+ #     javax:
+  #      persistence:
+   #       schema-generation:
+    #        create-source: metadata
+     #       scripts:
+      #        action: create
+       #       create-target: guru_database_create.sql

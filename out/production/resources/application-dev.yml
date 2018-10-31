@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/sfg_dev
+    username: ENC(hS3hj/9ZR4mOgR7lj5wovXVHaNuw5EFF)
+    password: ENC(kvT8AlRLeOdj9nZgIDOCGHBSDAhT+8bI)
+    platform: mysql
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database: mysql
+    show-sql: true
+jasypt:
+  encryptor:
+    password: hammad85
+string: dev
+#    properties:
+ #     javax:
+  #      persistence:
+   #       schema-generation:
+    #        create-source: metadata
+     #       scripts:
+      #        action: create
+       #       create-target: guru_database_create.sql

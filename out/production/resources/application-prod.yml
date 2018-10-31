@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/sfg_prod
+    username: ENC(ySbwwv47ypDuVsu0s4rNV+Ax1SARjyb+)
+    password: ENC(4EGvdGztuArpk8prDhuwKpvuitQqmWq1)
+    platform: mysql
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database: mysql
+    show-sql: false
+jasypt:
+  encryptor:
+    password: hammad85
+string: prod
