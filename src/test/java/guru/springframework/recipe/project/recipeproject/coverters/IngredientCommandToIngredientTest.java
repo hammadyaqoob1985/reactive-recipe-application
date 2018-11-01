@@ -13,11 +13,11 @@ import static org.junit.Assert.*;
 
 public class IngredientCommandToIngredientTest {
 
-    public static final Long ID = 1L;
+    public static final String ID = "1";
     public static final String TEST_DESCRIPTION = "TEST DESCRIPTION";
     public static final BigDecimal AMOUNT = new BigDecimal(1);
     public static final RecipeCommand RECIPE = new RecipeCommand();
-    public static final Long UOM_ID = 2L;
+    public static final String UOM_ID = "2";
     private IngredientCommandToIngredient ingredientCommandToIngredient;
 
     @Before

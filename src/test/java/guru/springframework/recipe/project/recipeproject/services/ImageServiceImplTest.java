@@ -32,16 +32,16 @@ public class ImageServiceImplTest {
     @Test
     public void saveImageToDb() throws IOException {
         Recipe recipe = new Recipe();
-        recipe.setId(1L);
+        recipe.setId("1");
 
         MockMultipartFile mockMultipartFile =
                 new MockMultipartFile("imagefile", "testing.txt", "text/plain", "test".getBytes());
 
         Optional<Recipe> recipeOptional = Optional.of(recipe);
 
-        when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
+        when(recipeRepository.findById(anyString())).thenReturn(recipeOptional);
 
-        imageService.saveImageFile(1L, mockMultipartFile);
+        imageService.saveImageFile("1", mockMultipartFile);
 
         ArgumentCaptor<Recipe> recipeArgumentCaptor =  ArgumentCaptor.forClass(Recipe.class);
 

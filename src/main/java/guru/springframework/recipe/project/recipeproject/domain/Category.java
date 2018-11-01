@@ -11,7 +11,7 @@ import java.util.Set;
 @EqualsAndHashCode(exclude = {"recipes"})
 public class Category {
 
-    private Long Id;
+    private String Id;
     private String description;
 
     //do not need to have table in jpa for this as already done in recipe categories variable

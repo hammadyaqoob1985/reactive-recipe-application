@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class Recipe {
 
-    private Long id;
+    private String id;
 
     private String description;
     private Integer prepTime;

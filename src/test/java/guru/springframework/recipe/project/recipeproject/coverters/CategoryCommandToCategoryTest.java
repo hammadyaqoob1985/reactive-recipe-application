@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 
 public class CategoryCommandToCategoryTest {
 
-    public static final Long ID = 1L;
+    public static final String ID = "1";
     public static final String TEST_DECRIPTION = "TEST DECRIPTION";
     public static final HashSet<Recipe> RECIPES = new HashSet<Recipe>();
     CategoryCommandToCategory categoryCommandToCategory;

@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 
 public class NotesCommandToNotesTest {
 
-    public static final Long ID = 1L;
+    public static final String ID = "1";
     public static final String TEST_NOTES = "Test Notes";
     NotesCommandToNotes notesCommandToNotes;
 

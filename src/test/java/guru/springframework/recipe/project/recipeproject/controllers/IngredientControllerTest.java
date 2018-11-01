@@ -61,31 +61,31 @@ public class IngredientControllerTest {
     public void testListIngredientsView() throws Exception {
 
         RecipeCommand recipeCommand = new RecipeCommand();
-        when(recipeService.findCommandById(anyLong())).thenReturn(recipeCommand);
+        when(recipeService.findCommandById(anyString())).thenReturn(recipeCommand);
 
         mockMvc.perform(get("/recipe/1/ingredients"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("recipe/ingredient/list"))
                 .andExpect(model().attributeExists("recipe"));
 
-        verify(recipeService, times(1)).findCommandById(anyLong());
+        verify(recipeService, times(1)).findCommandById(anyString());
     }
 
     @Test
     public void testListIngredients() throws Exception {
 
         RecipeCommand recipeCommand = new RecipeCommand();
-        recipeCommand.setId(1L);
+        recipeCommand.setId("1");
 
-        when(recipeService.findCommandById(anyLong())).thenReturn(recipeCommand);
+        when(recipeService.findCommandById(anyString())).thenReturn(recipeCommand);
 
         ingredientController.getIngredientsList(model,"1");
 
         ArgumentCaptor<RecipeCommand> argumentCaptorRecipeCommand = ArgumentCaptor.forClass(RecipeCommand.class);
-        ArgumentCaptor<Long> argumentCaptorLong = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<String> argumentCaptorString = ArgumentCaptor.forClass(String.class);
 
-        verify(recipeService, times(1)).findCommandById(argumentCaptorLong.capture());
-        assertEquals(argumentCaptorLong.getValue(), new Long("1"));
+        verify(recipeService, times(1)).findCommandById(argumentCaptorString.capture());
+        assertEquals(argumentCaptorString.getValue(), new String("1"));
 
         verify(model, times(1)).addAttribute(eq("recipe"), argumentCaptorRecipeCommand.capture());
         assertEquals(argumentCaptorRecipeCommand.getValue(), recipeCommand);
@@ -110,35 +110,35 @@ public class IngredientControllerTest {
 
         IngredientCommand ingredientCommand = new IngredientCommand();
 
-        when(ingredientService.findByRecipeIdAndIngredientId(anyLong(), anyLong())).thenReturn(ingredientCommand);
+        when(ingredientService.findByRecipeIdAndIngredientId(anyString(), anyString())).thenReturn(ingredientCommand);
 
         mockMvc.perform(get("/recipe/1/ingredient/2/show"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("recipe/ingredient/show"))
                 .andExpect(model().attributeExists("ingredient"));
 
-        verify(ingredientService, times(1)).findByRecipeIdAndIngredientId(anyLong(), anyLong());
+        verify(ingredientService, times(1)).findByRecipeIdAndIngredientId(anyString(), anyString());
     }
 
     @Test
     public void testIndividualIngredient() throws Exception {
 
         IngredientCommand ingredientCommand = new IngredientCommand();
-        ingredientCommand.setId(2L);
+        ingredientCommand.setId("2");
 
         RecipeCommand recipeCommand = new RecipeCommand();
-        recipeCommand.setId(1L);
+        recipeCommand.setId("1");
 
-        when(ingredientService.findByRecipeIdAndIngredientId(anyLong(), anyLong())).thenReturn(ingredientCommand);
+        when(ingredientService.findByRecipeIdAndIngredientId(anyString(), anyString())).thenReturn(ingredientCommand);
 
         assertEquals(ingredientController.showIngredientForRecipe(model, "1", "2"), "recipe/ingredient/show");
 
         ArgumentCaptor<IngredientCommand> argumentCaptorIngredientCommand = ArgumentCaptor.forClass(IngredientCommand.class);
-        ArgumentCaptor<Long> argumentCaptorLong = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<String> argumentCaptorString = ArgumentCaptor.forClass(String.class);
 
-        verify(ingredientService, times(1)).findByRecipeIdAndIngredientId(argumentCaptorLong.capture(), argumentCaptorLong.capture());
-        assertEquals(argumentCaptorLong.getAllValues().get(0), new Long("1"));
-        assertEquals(argumentCaptorLong.getAllValues().get(1), new Long("2"));
+        verify(ingredientService, times(1)).findByRecipeIdAndIngredientId(argumentCaptorString.capture(), argumentCaptorString.capture());
+        assertEquals(argumentCaptorString.getAllValues().get(0), new String("1"));
+        assertEquals(argumentCaptorString.getAllValues().get(1), new String("2"));
 
         verify(model, times(1)).addAttribute(eq("ingredient"), argumentCaptorIngredientCommand.capture());
         assertEquals(argumentCaptorIngredientCommand.getValue(), ingredientCommand);
@@ -149,19 +149,19 @@ public class IngredientControllerTest {
     public void testUpdateIngredientView() throws Exception {
 
         IngredientCommand ingredientCommand = new IngredientCommand();
-        ingredientCommand.setId(2L);
+        ingredientCommand.setId("2");
 
         Set<UnitOfMeasureCommand> unitOfMeasureCommands =  new HashSet<>();
         UnitOfMeasureCommand unitOfMeasureCommand = new UnitOfMeasureCommand();
-        unitOfMeasureCommand.setId(1L);
+        unitOfMeasureCommand.setId("1");
 
         UnitOfMeasureCommand unitOfMeasureCommand1 = new UnitOfMeasureCommand();
-        unitOfMeasureCommand1.setId(2L);
+        unitOfMeasureCommand1.setId("2");
 
         unitOfMeasureCommands.add(unitOfMeasureCommand);
         unitOfMeasureCommands.add(unitOfMeasureCommand1);
 
-        when(ingredientService.findByRecipeIdAndIngredientId(anyLong(), anyLong())).thenReturn(ingredientCommand);
+        when(ingredientService.findByRecipeIdAndIngredientId(anyString(), anyString())).thenReturn(ingredientCommand);
         when(uomService.getAllUoms()).thenReturn(unitOfMeasureCommands);
 
         mockMvc.perform(get("/recipe/1/ingredient/2/update"))
@@ -170,7 +170,7 @@ public class IngredientControllerTest {
                 .andExpect(model().attributeExists("ingredient"))
                 .andExpect(model().attributeExists("uomList"));
 
-        verify(ingredientService, times(1)).findByRecipeIdAndIngredientId(anyLong(), anyLong());
+        verify(ingredientService, times(1)).findByRecipeIdAndIngredientId(anyString(), anyString());
         verify(uomService, times(1)).getAllUoms();
     }
 
@@ -178,27 +178,27 @@ public class IngredientControllerTest {
     public void testUpdateIngredient() throws Exception {
 
         IngredientCommand ingredientCommand = new IngredientCommand();
-        ingredientCommand.setId(2L);
+        ingredientCommand.setId("2");
 
         Set<UnitOfMeasureCommand> unitOfMeasureCommands =  new HashSet<>();
         UnitOfMeasureCommand unitOfMeasureCommand = new UnitOfMeasureCommand();
-        unitOfMeasureCommand.setId(1L);
+        unitOfMeasureCommand.setId("1");
 
         UnitOfMeasureCommand unitOfMeasureCommand1 = new UnitOfMeasureCommand();
-        unitOfMeasureCommand1.setId(2L);
+        unitOfMeasureCommand1.setId("2");
 
         unitOfMeasureCommands.add(unitOfMeasureCommand);
         unitOfMeasureCommands.add(unitOfMeasureCommand1);
 
-        when(ingredientService.findByRecipeIdAndIngredientId(anyLong(), anyLong())).thenReturn(ingredientCommand);
+        when(ingredientService.findByRecipeIdAndIngredientId(anyString(), anyString())).thenReturn(ingredientCommand);
         when(uomService.getAllUoms()).thenReturn(unitOfMeasureCommands);
 
         ingredientController.updateIngredientForRecipe(model, "1", "2");
 
-        ArgumentCaptor<Long> argumentCaptorLong = ArgumentCaptor.forClass(Long.class);
-        verify(ingredientService, times(1)).findByRecipeIdAndIngredientId(argumentCaptorLong.capture(), argumentCaptorLong.capture());
-        assertEquals(argumentCaptorLong.getAllValues().get(0), new Long("1"));
-        assertEquals(argumentCaptorLong.getAllValues().get(1), new Long("2"));
+        ArgumentCaptor<String> argumentCaptorString = ArgumentCaptor.forClass(String.class);
+        verify(ingredientService, times(1)).findByRecipeIdAndIngredientId(argumentCaptorString.capture(), argumentCaptorString.capture());
+        assertEquals(argumentCaptorString.getAllValues().get(0), new String("1"));
+        assertEquals(argumentCaptorString.getAllValues().get(1), new String("2"));
 
         ArgumentCaptor<IngredientCommand> argumentCaptorIngredientCommand = ArgumentCaptor.forClass(IngredientCommand.class);
         verify(model,times(1)).addAttribute(eq("ingredient"), argumentCaptorIngredientCommand.capture());
@@ -212,8 +212,8 @@ public class IngredientControllerTest {
     public void saveOrUpdateMockMvc() throws Exception {
 
         IngredientCommand ingredientCommand = new IngredientCommand();
-        ingredientCommand.setId(1L);
-        ingredientCommand.setRecipeId(3L);
+        ingredientCommand.setId("1");
+        ingredientCommand.setRecipeId("3");
 
         when(ingredientService.saveIngredientCommand(any(IngredientCommand.class))).thenReturn(ingredientCommand);
 
@@ -230,8 +230,8 @@ public class IngredientControllerTest {
     public void saveOrUpdate() throws Exception {
 
         IngredientCommand ingredientCommand = new IngredientCommand();
-        ingredientCommand.setId(1L);
-        ingredientCommand.setRecipeId(3L);
+        ingredientCommand.setId("1");
+        ingredientCommand.setRecipeId("3");
 
         when(ingredientService.saveIngredientCommand(any(IngredientCommand.class))).thenReturn(ingredientCommand);
 
@@ -251,7 +251,7 @@ public class IngredientControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/recipe/1/ingredients"));
 
-        verify(ingredientService,times(1)).deleteByRecipeIdAndIngredientId(new Long(1), new Long(2));
+        verify(ingredientService,times(1)).deleteByRecipeIdAndIngredientId("1", "2");
 
     }
 }

@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 
 public class RecipeCommandToRecipeTest {
 
-    public static final Long ID = 1L;
+    public static final String ID = "1";
     public static final Integer COOK_TIME = 5;
     public static final String TEST_DESCRIPTION = "Test description";
     public static final Difficulty EASY = Difficulty.EASY;
@@ -22,11 +22,11 @@ public class RecipeCommandToRecipeTest {
     public static final Integer SERVINGS = 2;
     public static final String TEST_URL = "TEST URL";
     public static final Integer SOURCE = 2;
-    public static final Long ID1 = 5L;
-    public static final Long ID2 = 6L;
-    public static final Long ID3 = 7L;
-    public static final Long ID4 = 6L;
-    public static final Long ID5 = 8L;
+    public static final String ID1 = "5";
+    public static final String ID2 = "6";
+    public static final String ID3 = "7";
+    public static final String ID4 = "6";
+    public static final String ID5 = "8";
     RecipeCommandToRecipe recipeCommandToRecipe;
 
     @Before

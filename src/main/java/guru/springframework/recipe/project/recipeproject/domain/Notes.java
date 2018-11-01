@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(exclude = {"recipe"})
 public class Notes {
 
-    private Long id;
+    private String id;
 
 
     private Recipe recipe;
