@@ -2,6 +2,8 @@ package guru.springframework.recipe.project.recipeproject.domain;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 
 @Data
@@ -9,6 +11,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(exclude = {"recipe"})
 public class Notes {
 
+    @Id
     private String id;
 
 

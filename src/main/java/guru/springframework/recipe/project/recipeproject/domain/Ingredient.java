@@ -2,18 +2,24 @@ package guru.springframework.recipe.project.recipeproject.domain;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 
 @Data
 //avoid addind recipe in hashcode as can cause circular reference error
 @EqualsAndHashCode(exclude = {"recipe"})
+
 public class Ingredient {
 
+    @Id
     private String id;
     private String description;
     private BigDecimal amount;
 
+    @DBRef
     private UnitOfMeasure uom;
 
     private Recipe recipe;
@@ -26,7 +32,7 @@ public class Ingredient {
         this.description = description;
         this.amount = amount;
         this.uom = uom;
-        this.recipe = recipe;
+        //this.recipe = recipe;
     }
 
     public Ingredient(String description, BigDecimal amount, UnitOfMeasure uom) {
