@@ -37,18 +37,23 @@ public class IngredientServiceImpl implements IngredientService{
             log.debug("recipe not found" + recipeId);
         }
         Recipe recipe = recipeOptional.get();
-        Optional<IngredientCommand> ingredientCommandOptional = recipe.getIngredients().stream().
-                filter(ingredient -> ingredient.getId() == ingredientCaptor).
-                map(ingredient -> ingredientToIngredientCommand.convert(ingredient)).
-                findFirst();
-        if(!ingredientCommandOptional.isPresent()) {
-            log.debug("ingredient not found" + ingredientCaptor);
+        Optional<IngredientCommand> ingredientCommandOptional = recipe.getIngredients().stream()
+                .filter(ingredient -> ingredient.getId().equals(ingredientCaptor))
+                .map( ingredient -> ingredientToIngredientCommand.convert(ingredient)).findFirst();
+
+        if(!ingredientCommandOptional.isPresent()){
+            //todo impl error handling
+            log.error("Ingredient id not found: " + ingredientCaptor);
         }
+
+        //enhance command object with recipe id
+        IngredientCommand ingredientCommand = ingredientCommandOptional.get();
+        ingredientCommand.setRecipeId(recipe.getId());
+
         return ingredientCommandOptional.get();
     }
 
     @Override
-    @Transactional
     public IngredientCommand saveIngredientCommand(IngredientCommand ingredientCommand) {
         Optional<Recipe> recipeOptional = recipeRepository.findById(ingredientCommand.getRecipeId());
 
@@ -76,7 +81,7 @@ public class IngredientServiceImpl implements IngredientService{
             } else {
                 //add new Ingredient
                 Ingredient ingredient = ingredientCommandToIngredient.convert(ingredientCommand);
-                ingredient.setRecipe(recipe);
+                //  ingredient.setRecipe(recipe);
                 recipe.addIngredient(ingredient);
             }
 
@@ -86,14 +91,22 @@ public class IngredientServiceImpl implements IngredientService{
                     .filter(recipeIngredients -> recipeIngredients.getId().equals(ingredientCommand.getId()))
                     .findFirst();
 
-            if(!savedIngredientOptional.isPresent()) {
+            //check by description
+            if(!savedIngredientOptional.isPresent()){
+                //not totally safe... But best guess
                 savedIngredientOptional = savedRecipe.getIngredients().stream()
-                        .filter(ingredient -> ingredient.getDescription().equals(ingredientCommand.getDescription()))
-                        .filter(ingredient -> ingredient.getAmount().equals(ingredientCommand.getAmount()))
-                        .filter(ingredient -> ingredient.getUom().getId().equals(ingredientCommand.getUom().getId()))
+                        .filter(recipeIngredients -> recipeIngredients.getDescription().equals(ingredientCommand.getDescription()))
+                        .filter(recipeIngredients -> recipeIngredients.getAmount().equals(ingredientCommand.getAmount()))
+                        .filter(recipeIngredients -> recipeIngredients.getUom().getId().equals(ingredientCommand.getUom().getId()))
                         .findFirst();
             }
-            return ingredientToIngredientCommand.convert(savedIngredientOptional.get());
+
+
+            //enhance with id value
+            IngredientCommand ingredientCommandSaved = ingredientToIngredientCommand.convert(savedIngredientOptional.get());
+            ingredientCommandSaved.setRecipeId(recipe.getId());
+
+            return ingredientCommandSaved;
         }
     }
 
