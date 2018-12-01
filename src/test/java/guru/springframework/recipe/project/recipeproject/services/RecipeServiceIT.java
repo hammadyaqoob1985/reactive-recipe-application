@@ -31,7 +31,6 @@ public class RecipeServiceIT {
     @Autowired
     RecipeToRecipeCommand recipeToRecipeCommand;
 
-    @Transactional
     @Test
     public void testSaveDescription() {
         Iterable<Recipe> recipes = recipeRepository.findAll();
