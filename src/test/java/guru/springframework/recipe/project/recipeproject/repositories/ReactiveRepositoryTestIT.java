@@ -1,6 +1,7 @@
 package guru.springframework.recipe.project.recipeproject.repositories;
 
 import guru.springframework.recipe.project.recipeproject.bootstrap.RecipeBootStrap;
+import guru.springframework.recipe.project.recipeproject.domain.Recipe;
 import guru.springframework.recipe.project.recipeproject.domain.UnitOfMeasure;
 import guru.springframework.recipe.project.recipeproject.repositories.reactive.CategoryReactiveRepository;
 import guru.springframework.recipe.project.recipeproject.repositories.reactive.RecipeReactiveRepository;
@@ -10,17 +11,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import java.util.HashSet;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @DataMongoTest
-public class UnitOfMeasureRepositoryTestIT {
+public class ReactiveRepositoryTestIT {
 
     @Autowired
     CategoryRepository categoryRepository;
@@ -42,22 +46,20 @@ public class UnitOfMeasureRepositoryTestIT {
 
     @Before
     public void setUp() throws Exception {
-        RecipeBootStrap recipeBootStrap = new RecipeBootStrap(categoryRepository, recipeRepository, unitOfMeasureRepository,
-                categoryReactiveRepository, recipeReactiveRepository, unitOfMeasureReactiveRepository);
-        recipeBootStrap.onApplicationEvent(null);
+      recipeRepository.deleteAll();
     }
 
     @Test
     //release spring context after test. Beans releasesed after test
     @DirtiesContext
-    public void findByUom() {
-        Optional<UnitOfMeasure> optionalUnitOfMeasure = unitOfMeasureRepository.findByUom("Teaspoon");
-        assertEquals("Teaspoon", optionalUnitOfMeasure.get().getUom());
+    public void saveAndFetch() {
+        Recipe recipe = new Recipe();
+        recipe.setId("TEST ID");
+        recipeReactiveRepository.save(recipe).block();
+
+        Long count = recipeReactiveRepository.count().block();
+        assertEquals(Long.valueOf(1), count);
     }
 
-    @Test
-    public void findByUomCup() {
-        Optional<UnitOfMeasure> optionalUnitOfMeasure = unitOfMeasureRepository.findByUom("Cup");
-        assertEquals("Cup", optionalUnitOfMeasure.get().getUom());
-    }
+
 }
