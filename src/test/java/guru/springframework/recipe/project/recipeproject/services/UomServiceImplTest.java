@@ -4,10 +4,12 @@ import guru.springframework.recipe.project.recipeproject.commands.UnitOfMeasureC
 import guru.springframework.recipe.project.recipeproject.coverters.UnitOfMeasureToUnitOfMeasureCommand;
 import guru.springframework.recipe.project.recipeproject.domain.UnitOfMeasure;
 import guru.springframework.recipe.project.recipeproject.repositories.UnitOfMeasureRepository;
+import guru.springframework.recipe.project.recipeproject.repositories.reactive.UnitOfMeasureReactiveRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import reactor.core.publisher.Flux;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,7 +20,7 @@ import static org.mockito.Mockito.*;
 public class UomServiceImplTest {
 
     @Mock
-    UnitOfMeasureRepository unitOfMeasureRepository;
+    UnitOfMeasureReactiveRepository unitOfMeasureReactiveRepository;
 
     UomService uomService;
 
@@ -28,7 +30,7 @@ public class UomServiceImplTest {
 
         MockitoAnnotations.initMocks(this);
         unitOfMeasureToUnitOfMeasureCommand = new UnitOfMeasureToUnitOfMeasureCommand();
-        uomService = new UomServiceImpl(unitOfMeasureToUnitOfMeasureCommand, unitOfMeasureRepository);
+        uomService = new UomServiceImpl(unitOfMeasureToUnitOfMeasureCommand, unitOfMeasureReactiveRepository);
     }
 
     @Test
@@ -45,12 +47,12 @@ public class UomServiceImplTest {
         unitOfMeasureSet.add(unitOfMeasure);
         unitOfMeasureSet.add(unitOfMeasure1);
 
-        when(unitOfMeasureRepository.findAll()).thenReturn(unitOfMeasureSet);
+        when(unitOfMeasureReactiveRepository.findAll()).thenReturn(Flux.just(unitOfMeasure,unitOfMeasure1));
 
-        Set<UnitOfMeasureCommand> unitOfMeasureCommands = uomService.getAllUoms();
+        Flux<UnitOfMeasureCommand> unitOfMeasureCommands = uomService.getAllUoms();
 
-        assertEquals(unitOfMeasureCommands.size(), 2);
-        verify(unitOfMeasureRepository, times(1)).findAll();
+        assertEquals(unitOfMeasureCommands.count().block(), Long.valueOf(2));
+        verify(unitOfMeasureReactiveRepository, times(1)).findAll();
 
     }
 }

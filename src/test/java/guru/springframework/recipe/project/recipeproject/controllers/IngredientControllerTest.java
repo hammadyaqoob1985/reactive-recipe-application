@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
+import reactor.core.publisher.Flux;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -43,7 +44,7 @@ public class IngredientControllerTest {
     Model model;
 
     @Captor
-    private ArgumentCaptor<Set<UnitOfMeasureCommand>> captor;
+    private ArgumentCaptor<Flux<UnitOfMeasureCommand>> captor;
 
     IngredientController ingredientController;
 
@@ -94,7 +95,7 @@ public class IngredientControllerTest {
     @Test
     public void testAddIngredientView() throws Exception {
 
-        when(uomService.getAllUoms()).thenReturn(new HashSet<>());
+        when(uomService.getAllUoms()).thenReturn(Flux.empty());
 
         mockMvc.perform(get("/recipe/1/ingredient/add"))
                 .andExpect(status().isOk())
@@ -162,7 +163,7 @@ public class IngredientControllerTest {
         unitOfMeasureCommands.add(unitOfMeasureCommand1);
 
         when(ingredientService.findByRecipeIdAndIngredientId(anyString(), anyString())).thenReturn(ingredientCommand);
-        when(uomService.getAllUoms()).thenReturn(unitOfMeasureCommands);
+        when(uomService.getAllUoms()).thenReturn(Flux.just(unitOfMeasureCommand, unitOfMeasureCommand1));
 
         mockMvc.perform(get("/recipe/1/ingredient/2/update"))
                 .andExpect(status().isOk())
@@ -191,7 +192,7 @@ public class IngredientControllerTest {
         unitOfMeasureCommands.add(unitOfMeasureCommand1);
 
         when(ingredientService.findByRecipeIdAndIngredientId(anyString(), anyString())).thenReturn(ingredientCommand);
-        when(uomService.getAllUoms()).thenReturn(unitOfMeasureCommands);
+        when(uomService.getAllUoms()).thenReturn(Flux.just(unitOfMeasureCommand, unitOfMeasureCommand1));
 
         ingredientController.updateIngredientForRecipe(model, "1", "2");
 
@@ -205,7 +206,8 @@ public class IngredientControllerTest {
         assertEquals(ingredientCommand, argumentCaptorIngredientCommand.getValue());
 
         verify(model,times(1)).addAttribute(eq("uomList"), captor.capture());
-        assertEquals(unitOfMeasureCommands, captor.getValue());
+        assertEquals(unitOfMeasureCommand, captor.getValue().blockFirst());
+        assertEquals(unitOfMeasureCommand1, captor.getValue().blockLast());
     }
 
     @Test
