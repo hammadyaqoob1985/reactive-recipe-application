@@ -28,18 +28,13 @@ public class RecipeBootStrap implements ApplicationListener<ContextRefreshedEven
     private final CategoryRepository categoryRepository;
     private final RecipeRepository recipeRepository;
     private final UnitOfMeasureRepository unitOfMeasureRepository;
-    private final CategoryReactiveRepository categoryReactiveRepository;
-    private final RecipeReactiveRepository recipeReactiveRepository;
-    private final UnitOfMeasureReactiveRepository unitOfMeasureReactiveRepository;
 
 
-    public RecipeBootStrap(CategoryRepository categoryRepository, RecipeRepository recipeRepository, UnitOfMeasureRepository unitOfMeasureRepository, CategoryReactiveRepository categoryReactiveRepository, RecipeReactiveRepository recipeReactiveRepository, UnitOfMeasureReactiveRepository unitOfMeasureReactiveRepository) {
+
+    public RecipeBootStrap(CategoryRepository categoryRepository, RecipeRepository recipeRepository, UnitOfMeasureRepository unitOfMeasureRepository) {
         this.categoryRepository = categoryRepository;
         this.recipeRepository = recipeRepository;
         this.unitOfMeasureRepository = unitOfMeasureRepository;
-        this.categoryReactiveRepository = categoryReactiveRepository;
-        this.recipeReactiveRepository = recipeReactiveRepository;
-        this.unitOfMeasureReactiveRepository = unitOfMeasureReactiveRepository;
     }
 
     @Override
@@ -50,11 +45,6 @@ public class RecipeBootStrap implements ApplicationListener<ContextRefreshedEven
         recipeRepository.saveAll(getRecipes());
         log.debug("Loading Bootstrap Data");
 
-        log.error("###########################");
-        log.error("category count [{}]",categoryReactiveRepository.count().block().toString());
-        log.error("recipe count [{}]",recipeReactiveRepository.count().block().toString());
-        log.error("uom count [{}]",unitOfMeasureReactiveRepository.count().block().toString());
-        log.error("###########################");
     }
 
     private void loadCategories() {

@@ -31,19 +31,10 @@ public class UnitOfMeasureRepositoryTestIT {
     @Autowired
     UnitOfMeasureRepository unitOfMeasureRepository;
 
-    @Autowired
-    CategoryReactiveRepository categoryReactiveRepository;
-
-    @Autowired
-    RecipeReactiveRepository recipeReactiveRepository;
-
-    @Autowired
-    UnitOfMeasureReactiveRepository unitOfMeasureReactiveRepository;
 
     @Before
     public void setUp() throws Exception {
-        RecipeBootStrap recipeBootStrap = new RecipeBootStrap(categoryRepository, recipeRepository, unitOfMeasureRepository,
-                categoryReactiveRepository, recipeReactiveRepository, unitOfMeasureReactiveRepository);
+        RecipeBootStrap recipeBootStrap = new RecipeBootStrap(categoryRepository, recipeRepository, unitOfMeasureRepository);
         recipeBootStrap.onApplicationEvent(null);
     }
 

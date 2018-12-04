@@ -1,11 +1,9 @@
-package guru.springframework.recipe.project.recipeproject.repositories;
+package guru.springframework.recipe.project.recipeproject.repositories.reactive;
 
-import guru.springframework.recipe.project.recipeproject.bootstrap.RecipeBootStrap;
 import guru.springframework.recipe.project.recipeproject.domain.Recipe;
-import guru.springframework.recipe.project.recipeproject.domain.UnitOfMeasure;
-import guru.springframework.recipe.project.recipeproject.repositories.reactive.CategoryReactiveRepository;
-import guru.springframework.recipe.project.recipeproject.repositories.reactive.RecipeReactiveRepository;
-import guru.springframework.recipe.project.recipeproject.repositories.reactive.UnitOfMeasureReactiveRepository;
+import guru.springframework.recipe.project.recipeproject.repositories.CategoryRepository;
+import guru.springframework.recipe.project.recipeproject.repositories.RecipeRepository;
+import guru.springframework.recipe.project.recipeproject.repositories.UnitOfMeasureRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,19 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
-import java.util.HashSet;
-import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @DataMongoTest
-public class ReactiveRepositoryTestIT {
-
+public class RecipeReactiveRepositoryTest {
     @Autowired
     CategoryRepository categoryRepository;
 
@@ -46,7 +37,7 @@ public class ReactiveRepositoryTestIT {
 
     @Before
     public void setUp() throws Exception {
-      recipeRepository.deleteAll();
+        recipeRepository.deleteAll();
     }
 
     @Test
@@ -60,6 +51,5 @@ public class ReactiveRepositoryTestIT {
         Long count = recipeReactiveRepository.count().block();
         assertEquals(Long.valueOf(1), count);
     }
-
 
 }
