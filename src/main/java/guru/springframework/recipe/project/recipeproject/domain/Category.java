@@ -18,9 +18,6 @@ public class Category {
     @Id
     private String Id;
     private String description;
-
-    //do not need to have table in jpa for this as already done in recipe categories variable
-    @DBRef
     Set<Recipe> recipes;
 
 }

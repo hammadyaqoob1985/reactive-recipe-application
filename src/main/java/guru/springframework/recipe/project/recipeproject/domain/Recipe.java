@@ -39,7 +39,6 @@ public class Recipe {
 
     //added join table as only need one table to show recipes to categories. Without it two tables would be created
 
-    @DBRef
     private Set<Category> categories = new HashSet<>();
 
     //since method already here lombok wont override it
