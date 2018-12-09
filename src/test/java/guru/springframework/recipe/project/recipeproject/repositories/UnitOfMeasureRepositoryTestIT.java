@@ -39,8 +39,6 @@ public class UnitOfMeasureRepositoryTestIT {
     }
 
     @Test
-    //release spring context after test. Beans releasesed after test
-    @DirtiesContext
     public void findByUom() {
         Optional<UnitOfMeasure> optionalUnitOfMeasure = unitOfMeasureRepository.findByUom("Teaspoon");
         assertEquals("Teaspoon", optionalUnitOfMeasure.get().getUom());
