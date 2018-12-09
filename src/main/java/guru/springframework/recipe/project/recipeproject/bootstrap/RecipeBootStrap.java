@@ -33,7 +33,7 @@ public class RecipeBootStrap implements ApplicationListener<ContextRefreshedEven
 
     public RecipeBootStrap(CategoryRepository categoryRepository, RecipeRepository recipeRepository, UnitOfMeasureRepository unitOfMeasureRepository) {
         this.categoryRepository = categoryRepository;
-        this.recipeRepository = recipeRepository;
+        this.recipeRepository = recipeRepository;//
         this.unitOfMeasureRepository = unitOfMeasureRepository;
     }
 
