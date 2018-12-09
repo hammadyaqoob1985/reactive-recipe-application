@@ -30,10 +30,6 @@ import static org.mockito.Mockito.*;
 
 public class IngredientServiceImplTest {
 
-
-    @Mock
-    RecipeRepository recipeRepository;
-
     @Mock
     RecipeReactiveRepository recipeReactiveRepository;
 
@@ -54,7 +50,7 @@ public class IngredientServiceImplTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        ingredientService = new IngredientServiceImpl(recipeReactiveRepository, ingredientToIngredientCommand, ingredientCommandToIngredient, unitOfMeasureRepository, recipeRepository);
+        ingredientService = new IngredientServiceImpl(recipeReactiveRepository, ingredientToIngredientCommand, ingredientCommandToIngredient, unitOfMeasureRepository);
     }
 
     @Test
@@ -88,22 +84,20 @@ public class IngredientServiceImplTest {
         command.setId("3");
         command.setRecipeId("2");
 
-        Optional<Recipe> recipeOptional = Optional.of(new Recipe());
-
         Recipe savedRecipe = new Recipe();
         savedRecipe.addIngredient(new Ingredient());
         savedRecipe.getIngredients().iterator().next().setId("3");
 
-        when(recipeRepository.findById(anyString())).thenReturn(recipeOptional);
-        when(recipeRepository.save(any())).thenReturn(savedRecipe);
+        when(recipeReactiveRepository.findById(anyString())).thenReturn(Mono.just(new Recipe()));
+        when(recipeReactiveRepository.save(any())).thenReturn(Mono.just(savedRecipe));
 
         //when
         IngredientCommand savedCommand = ingredientService.saveIngredientCommand(command).block();
 
         //then
         assertEquals("3", savedCommand.getId());
-        verify(recipeRepository, times(1)).findById(anyString());
-        verify(recipeRepository, times(1)).save(any(Recipe.class));
+        verify(recipeReactiveRepository, times(1)).findById(anyString());
+        verify(recipeReactiveRepository, times(1)).save(any(Recipe.class));
 
     }
 
@@ -122,17 +116,16 @@ public class IngredientServiceImplTest {
         existingRecipe.addIngredient(ingredient);
         existingRecipe.addIngredient(ingredient1);
 
-        Optional<Recipe> recipeOptional = Optional.of(existingRecipe);
 
-        when(recipeRepository.findById(anyString())).thenReturn(recipeOptional);
-        when(recipeRepository.save(any())).thenReturn(existingRecipe);
+        when(recipeReactiveRepository.findById(anyString())).thenReturn(Mono.just(existingRecipe));
+        when(recipeReactiveRepository.save(any())).thenReturn(Mono.just(existingRecipe));
 
         ingredientService.deleteByRecipeIdAndIngredientId("1","3");
 
-        verify(recipeRepository, times(1)).findById(anyString());
+        verify(recipeReactiveRepository, times(1)).findById(anyString());
 
         ArgumentCaptor<Recipe> recipeArgumentCaptor = ArgumentCaptor.forClass(Recipe.class);
-        verify(recipeRepository, times(1)).save(recipeArgumentCaptor.capture());
+        verify(recipeReactiveRepository, times(1)).save(recipeArgumentCaptor.capture());
         Recipe recipeThatWasSaved = recipeArgumentCaptor.getValue();
         Set<Ingredient> ingredients = recipeThatWasSaved.getIngredients();
         assertEquals(ingredients.size(), 1);

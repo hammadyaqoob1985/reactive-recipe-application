@@ -26,7 +26,7 @@ public class RecipeController {
 
     @GetMapping({"/recipe/{id}/show"})
     public String getRecipe(Model model, @PathVariable String id) {
-        model.addAttribute("recipe", recipeService.findById(id));
+        model.addAttribute("recipe", recipeService.findById(id).block());
         return "/recipe/show";
     }
 
@@ -46,7 +46,7 @@ public class RecipeController {
     @GetMapping({"/recipe/{id}/delete"})
     public String deleteById(@PathVariable String id) {
         log.debug("deleting recipe with id" + id);
-        recipeService.deleteById(id);
+        recipeService.deleteById(id).block();
         return "redirect:/";
     }
 

@@ -10,8 +10,11 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
+import reactor.core.publisher.Flux;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -41,6 +44,7 @@ public class IndexControllerTest {
     @Test
     public void testMockMvc() throws Exception {
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(indexController).build();
+        when(recipeService.getRecipes()).thenReturn(Flux.empty());
         mockMvc.perform(get("/")).andExpect(status().isOk())
                 .andExpect(view().name("index"));
     }
@@ -58,8 +62,8 @@ public class IndexControllerTest {
         recipes.add(recipe2);
 
         //set up argument captor to capture argument of type set
-        ArgumentCaptor<Set<Recipe>> argumentCaptor = ArgumentCaptor.forClass(Set.class);
-        when(recipeService.getRecipes()).thenReturn(recipes);
+        ArgumentCaptor<List<Recipe>> argumentCaptor = ArgumentCaptor.forClass(ArrayList.class);
+        when(recipeService.getRecipes()).thenReturn(Flux.fromIterable(recipes));
         String result = indexController.getIndexPage(model);
 
         //when doing verify capture arguments then
@@ -68,7 +72,7 @@ public class IndexControllerTest {
 
         assertEquals("index",result);
 
-        Set<Recipe> recipeSetAddedToModel = argumentCaptor.getValue();
+        List<Recipe> recipeSetAddedToModel = argumentCaptor.getValue();
         assertEquals(2, recipeSetAddedToModel.size());
 
 

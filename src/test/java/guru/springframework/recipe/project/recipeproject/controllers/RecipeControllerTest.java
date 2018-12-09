@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
+import reactor.core.publisher.Mono;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -50,7 +51,7 @@ public class RecipeControllerTest {
         Recipe recipe1 = new Recipe();
         recipe1.setId("1");
 
-        when(recipeService.findById(anyString())).thenReturn(recipe1);
+        when(recipeService.findById(anyString())).thenReturn(Mono.just(recipe1));
 
         mockMvc.perform(get("/recipe/1/show"))
                 .andExpect(status().isOk())
@@ -64,7 +65,7 @@ public class RecipeControllerTest {
         Recipe recipe1 = new Recipe();
         recipe1.setId("1");
 
-        when(recipeService.findById(anyString())).thenReturn(recipe1);
+        when(recipeService.findById(anyString())).thenReturn(Mono.just(recipe1));
 
         String returnedString = recipeController.getRecipe(model, "1");
 
@@ -149,6 +150,7 @@ public class RecipeControllerTest {
     @Test
     public void delete() {
 
+        when(recipeService.deleteById(anyString())).thenReturn(Mono.empty());
         String returnedString = recipeController.deleteById("1");
 
         assertEquals(returnedString, "redirect:/");
@@ -159,6 +161,7 @@ public class RecipeControllerTest {
     @Test
     public void testDeleteRecipe() throws Exception {
 
+        when(recipeService.deleteById(anyString())).thenReturn(Mono.empty());
         mockMvc.perform(get("/recipe/1/delete"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/"));

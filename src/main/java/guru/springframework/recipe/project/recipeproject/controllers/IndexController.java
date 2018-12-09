@@ -7,10 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
 import java.util.Set;
 @Slf4j
 @Controller
 public class IndexController {
+
 
     RecipeService recipeService;
 
@@ -20,11 +22,8 @@ public class IndexController {
 
     @RequestMapping({"","/","/index"})
     public String getIndexPage(Model model) {
-
-
-
         log.debug("getting index page");
-        Set<Recipe> recipeSet = recipeService.getRecipes();
+        List<Recipe> recipeSet = recipeService.getRecipes().collectList().block();
         model.addAttribute("recipes", recipeSet);
         return "index";
     }
