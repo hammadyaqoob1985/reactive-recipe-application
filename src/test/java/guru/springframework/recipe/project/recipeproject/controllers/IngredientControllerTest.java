@@ -17,11 +17,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -44,7 +49,7 @@ public class IngredientControllerTest {
     Model model;
 
     @Captor
-    private ArgumentCaptor<Flux<UnitOfMeasureCommand>> captor;
+    private ArgumentCaptor<List<UnitOfMeasureCommand>> captor;
 
     IngredientController ingredientController;
 
@@ -111,7 +116,7 @@ public class IngredientControllerTest {
 
         IngredientCommand ingredientCommand = new IngredientCommand();
 
-        when(ingredientService.findByRecipeIdAndIngredientId(anyString(), anyString())).thenReturn(ingredientCommand);
+        when(ingredientService.findByRecipeIdAndIngredientId(anyString(), anyString())).thenReturn(Mono.just(ingredientCommand));
 
         mockMvc.perform(get("/recipe/1/ingredient/2/show"))
                 .andExpect(status().isOk())
@@ -130,7 +135,7 @@ public class IngredientControllerTest {
         RecipeCommand recipeCommand = new RecipeCommand();
         recipeCommand.setId("1");
 
-        when(ingredientService.findByRecipeIdAndIngredientId(anyString(), anyString())).thenReturn(ingredientCommand);
+        when(ingredientService.findByRecipeIdAndIngredientId(anyString(), anyString())).thenReturn(Mono.just(ingredientCommand));
 
         assertEquals(ingredientController.showIngredientForRecipe(model, "1", "2"), "recipe/ingredient/show");
 
@@ -162,7 +167,7 @@ public class IngredientControllerTest {
         unitOfMeasureCommands.add(unitOfMeasureCommand);
         unitOfMeasureCommands.add(unitOfMeasureCommand1);
 
-        when(ingredientService.findByRecipeIdAndIngredientId(anyString(), anyString())).thenReturn(ingredientCommand);
+        when(ingredientService.findByRecipeIdAndIngredientId(anyString(), anyString())).thenReturn(Mono.just(ingredientCommand));
         when(uomService.getAllUoms()).thenReturn(Flux.just(unitOfMeasureCommand, unitOfMeasureCommand1));
 
         mockMvc.perform(get("/recipe/1/ingredient/2/update"))
@@ -191,7 +196,7 @@ public class IngredientControllerTest {
         unitOfMeasureCommands.add(unitOfMeasureCommand);
         unitOfMeasureCommands.add(unitOfMeasureCommand1);
 
-        when(ingredientService.findByRecipeIdAndIngredientId(anyString(), anyString())).thenReturn(ingredientCommand);
+        when(ingredientService.findByRecipeIdAndIngredientId(anyString(), anyString())).thenReturn(Mono.just(ingredientCommand));
         when(uomService.getAllUoms()).thenReturn(Flux.just(unitOfMeasureCommand, unitOfMeasureCommand1));
 
         ingredientController.updateIngredientForRecipe(model, "1", "2");
@@ -206,8 +211,7 @@ public class IngredientControllerTest {
         assertEquals(ingredientCommand, argumentCaptorIngredientCommand.getValue());
 
         verify(model,times(1)).addAttribute(eq("uomList"), captor.capture());
-        assertEquals(unitOfMeasureCommand, captor.getValue().blockFirst());
-        assertEquals(unitOfMeasureCommand1, captor.getValue().blockLast());
+        assertThat(captor.getValue(), containsInAnyOrder(unitOfMeasureCommand, unitOfMeasureCommand1));
     }
 
     @Test
@@ -217,7 +221,7 @@ public class IngredientControllerTest {
         ingredientCommand.setId("1");
         ingredientCommand.setRecipeId("3");
 
-        when(ingredientService.saveIngredientCommand(any(IngredientCommand.class))).thenReturn(ingredientCommand);
+        when(ingredientService.saveIngredientCommand(any(IngredientCommand.class))).thenReturn(Mono.just(ingredientCommand));
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(ingredientController).build();
         mockMvc.perform(post("/recipe/2/ingredient")
@@ -235,7 +239,7 @@ public class IngredientControllerTest {
         ingredientCommand.setId("1");
         ingredientCommand.setRecipeId("3");
 
-        when(ingredientService.saveIngredientCommand(any(IngredientCommand.class))).thenReturn(ingredientCommand);
+        when(ingredientService.saveIngredientCommand(any(IngredientCommand.class))).thenReturn(Mono.just(ingredientCommand));
 
         String page = ingredientController.saveOrUpdate(ingredientCommand);
 
