@@ -34,6 +34,11 @@ public class UnitOfMeasureRepositoryTestIT {
 
     @Before
     public void setUp() throws Exception {
+
+        recipeRepository.deleteAll();
+        unitOfMeasureRepository.deleteAll();
+        categoryRepository.deleteAll();
+
         RecipeBootStrap recipeBootStrap = new RecipeBootStrap(categoryRepository, recipeRepository, unitOfMeasureRepository);
         recipeBootStrap.onApplicationEvent(null);
     }
