@@ -39,17 +39,16 @@ public class IngredientServiceImpl implements IngredientService {
     @Override
     public Mono<IngredientCommand> findByRecipeIdAndIngredientId(String recipeId, String ingredientCaptor) {
         return recipeReactiveRepository.findById(recipeId)
-                .map(recipe -> recipe.getIngredients()
-                        .stream()
-                        .filter(ingredient -> ingredientCaptor.equalsIgnoreCase(ingredient.getId()))
-                        .findFirst())
-                .filter(Optional::isPresent)
+                .flatMapIterable(Recipe::getIngredients)
+                .filter(ingredient -> ingredientCaptor.equalsIgnoreCase(ingredient.getId()))
+                .single()
                 .map(ingredient -> {
-                            IngredientCommand ingredientCommand = ingredientToIngredientCommand.convert(ingredient.get());
-                            ingredientCommand.setRecipeId(recipeId);
-                            return ingredientCommand;
-                        }
-                );
+                    IngredientCommand ingredientCommand = ingredientToIngredientCommand.convert(ingredient);
+                    ingredientCommand.setRecipeId(recipeId);
+                    return ingredientCommand;
+                });
+
+
 
         //        Optional<Recipe> recipeOptional = recipeRepository.findById(recipeId).block();
 //
@@ -96,8 +95,8 @@ public class IngredientServiceImpl implements IngredientService {
                 ingredientFound.setDescription(ingredientCommand.getDescription());
                 ingredientFound.setAmount(ingredientCommand.getAmount());
                 ingredientFound.setUom(unitOfMeasureRepository
-                                .findById(ingredientCommand.getUom().getId()).block());
-                        //.orElseThrow(() -> new RuntimeException("UOM NOT FOUND"))); //todo address this
+                        .findById(ingredientCommand.getUom().getId()).block());
+                //.orElseThrow(() -> new RuntimeException("UOM NOT FOUND"))); //todo address this
                 if (ingredientFound.getUom() == null) {
                     new RuntimeException("UOM NOT FOUND");
                 }
