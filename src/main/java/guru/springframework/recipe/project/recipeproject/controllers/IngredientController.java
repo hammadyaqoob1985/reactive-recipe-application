@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Controller
@@ -31,7 +32,7 @@ public class IngredientController {
     @GetMapping("/recipe/{id}/ingredients")
     public String getIngredientsList(Model model, @PathVariable String id) {
         log.debug("getting Ingredients list");
-        RecipeCommand recipeCommand = recipeService.findCommandById(id);
+        Mono<RecipeCommand> recipeCommand = recipeService.findCommandById(id);
         model.addAttribute("recipe", recipeCommand);
         return "recipe/ingredient/list";
     }

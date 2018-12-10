@@ -67,7 +67,7 @@ public class IngredientControllerTest {
     public void testListIngredientsView() throws Exception {
 
         RecipeCommand recipeCommand = new RecipeCommand();
-        when(recipeService.findCommandById(anyString())).thenReturn(recipeCommand);
+        when(recipeService.findCommandById(anyString())).thenReturn(Mono.just(recipeCommand));
 
         mockMvc.perform(get("/recipe/1/ingredients"))
                 .andExpect(status().isOk())
@@ -83,18 +83,18 @@ public class IngredientControllerTest {
         RecipeCommand recipeCommand = new RecipeCommand();
         recipeCommand.setId("1");
 
-        when(recipeService.findCommandById(anyString())).thenReturn(recipeCommand);
+        when(recipeService.findCommandById(anyString())).thenReturn(Mono.just(recipeCommand));
 
         ingredientController.getIngredientsList(model,"1");
 
-        ArgumentCaptor<RecipeCommand> argumentCaptorRecipeCommand = ArgumentCaptor.forClass(RecipeCommand.class);
+        ArgumentCaptor<Mono<RecipeCommand>> argumentCaptorRecipeCommand = ArgumentCaptor.forClass(Mono.class);
         ArgumentCaptor<String> argumentCaptorString = ArgumentCaptor.forClass(String.class);
 
         verify(recipeService, times(1)).findCommandById(argumentCaptorString.capture());
         assertEquals(argumentCaptorString.getValue(), new String("1"));
 
         verify(model, times(1)).addAttribute(eq("recipe"), argumentCaptorRecipeCommand.capture());
-        assertEquals(argumentCaptorRecipeCommand.getValue(), recipeCommand);
+        assertEquals(argumentCaptorRecipeCommand.getValue().block(), recipeCommand);
     }
 
     @Test

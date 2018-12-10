@@ -84,21 +84,17 @@ public class RecipeServiceImplTest {
         when(recipeToRecipeCommand.convert(any(Recipe.class))).thenReturn(recipeCommand);
         when(recipeRepository.save(any(Recipe.class))).thenReturn(Mono.just(recipe));
 
-        RecipeCommand recipeCommandReturned = recipeService.saveRecipeCommand(recipeCommand);
+        Mono<RecipeCommand> recipeCommandReturned = recipeService.saveRecipeCommand(recipeCommand);
 
         assertNotNull(recipeCommandReturned);
 
         ArgumentCaptor<RecipeCommand> recipeCommandCaptor = ArgumentCaptor.forClass(RecipeCommand.class);
         verify(recipeCommandToRecipe,times(1)).convert(recipeCommandCaptor.capture());
 
-        ArgumentCaptor<Recipe> recipeCaptor = ArgumentCaptor.forClass(Recipe.class);
-        verify(recipeToRecipeCommand,times(1)).convert(recipeCaptor.capture());
-
         ArgumentCaptor<Recipe> recipeCaptor1 = ArgumentCaptor.forClass(Recipe.class);
         verify(recipeRepository,times(1)).save(recipeCaptor1.capture());
 
         assertEquals(recipeCommand, recipeCommandCaptor.getValue());
-        assertEquals(recipe, recipeCaptor.getValue());
         assertEquals(recipe, recipeCaptor1.getValue());
 
     }
@@ -117,7 +113,7 @@ public class RecipeServiceImplTest {
         when(recipeRepository.findById(anyString())).thenReturn(Mono.just(recipe));
         when(recipeToRecipeCommand.convert(any(Recipe.class))).thenReturn(recipeCommand);
 
-        RecipeCommand commandReturned = recipeService.findCommandById("1");
+        RecipeCommand commandReturned = recipeService.findCommandById("1").block();
 
         assertNotNull(commandReturned);
         verify(recipeRepository,times(1)).findById(anyString());

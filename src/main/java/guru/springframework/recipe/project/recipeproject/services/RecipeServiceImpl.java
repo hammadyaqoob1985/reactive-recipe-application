@@ -5,18 +5,11 @@ import guru.springframework.recipe.project.recipeproject.coverters.RecipeCommand
 import guru.springframework.recipe.project.recipeproject.coverters.RecipeToRecipeCommand;
 import guru.springframework.recipe.project.recipeproject.domain.Recipe;
 import guru.springframework.recipe.project.recipeproject.exceptions.NotFoundException;
-import guru.springframework.recipe.project.recipeproject.repositories.RecipeRepository;
 import guru.springframework.recipe.project.recipeproject.repositories.reactive.RecipeReactiveRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 //lombok automatically gives you log
 @Slf4j
@@ -51,30 +44,34 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    @Transactional
-    public RecipeCommand findCommandById(String Id) {
-        RecipeCommand recipeCommand = recipeToRecipeCommand.convert(findById(Id).block());
+    public Mono<RecipeCommand> findCommandById(String Id) {
 
-        //enhance command object with id value
-        if(recipeCommand.getIngredients() != null && recipeCommand.getIngredients().size() > 0){
-            recipeCommand.getIngredients().forEach(rc -> {
-                rc.setRecipeId(recipeCommand.getId());
-            });
-        }
+        return recipeRepository.findById(Id)
+                .map(recipe -> {
+                    RecipeCommand recipeCommand = recipeToRecipeCommand.convert(recipe);
 
-        return recipeCommand;
+                    recipeCommand.getIngredients().forEach(ingredient -> {
+                        ingredient.setRecipeId(recipeCommand.getId());
+                    });
+                    return recipeCommand;
+                });
+
+//        RecipeCommand recipeCommand = recipeToRecipeCommand.convert(findById(Id).block());
+//
+//        //enhance command object with id value
+//        if(recipeCommand.getIngredients() != null && recipeCommand.getIngredients().size() > 0){
+//            recipeCommand.getIngredients().forEach(rc -> {
+//                rc.setRecipeId(recipeCommand.getId());
+//            });
+//        }
+//
+//        return recipeCommand;
     }
 
     @Override
-    @Transactional
-    public RecipeCommand saveRecipeCommand(RecipeCommand recipeCommand) {
-        Recipe detachedRecipe = recipeCommandToRecipe.convert(recipeCommand);
-
-        Recipe savedRecipe = recipeRepository.save(detachedRecipe).block();
-        log.debug("Saved recipe " + savedRecipe.getId());
-
-        return recipeToRecipeCommand.convert(savedRecipe);
-
+    public Mono<RecipeCommand> saveRecipeCommand(RecipeCommand recipeCommand) {
+        return recipeRepository.save(recipeCommandToRecipe.convert(recipeCommand))
+                .map(recipeToRecipeCommand::convert);
     }
 
     @Override

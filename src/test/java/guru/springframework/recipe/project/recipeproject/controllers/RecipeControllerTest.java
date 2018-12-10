@@ -104,7 +104,7 @@ public class RecipeControllerTest {
         RecipeCommand recipeCommand = new RecipeCommand();
         recipeCommand.setId("1");
 
-        when(recipeService.saveRecipeCommand(any(RecipeCommand.class))).thenReturn(recipeCommand);
+        when(recipeService.saveRecipeCommand(any(RecipeCommand.class))).thenReturn(Mono.just(recipeCommand));
 
         mockMvc.perform(post("/recipe")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -121,7 +121,7 @@ public class RecipeControllerTest {
         RecipeCommand recipeCommand = new RecipeCommand();
         recipeCommand.setId("1");
 
-        when(recipeService.saveRecipeCommand(any(RecipeCommand.class))).thenReturn(recipeCommand);
+        when(recipeService.saveRecipeCommand(any(RecipeCommand.class))).thenReturn(Mono.just(recipeCommand));
 
         mockMvc.perform(post("/recipe")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -138,7 +138,7 @@ public class RecipeControllerTest {
         RecipeCommand recipeCommand = new RecipeCommand();
         recipeCommand.setId("1");
 
-        when(recipeService.findCommandById(anyString())).thenReturn(recipeCommand);
+        when(recipeService.findCommandById(anyString())).thenReturn(Mono.just(recipeCommand));
 
         mockMvc.perform(get("/recipe/1/update"))
                 .andExpect(status().isOk())

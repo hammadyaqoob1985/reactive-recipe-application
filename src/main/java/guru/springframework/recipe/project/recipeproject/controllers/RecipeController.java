@@ -46,7 +46,7 @@ public class RecipeController {
     @GetMapping({"/recipe/{id}/delete"})
     public String deleteById(@PathVariable String id) {
         log.debug("deleting recipe with id" + id);
-        recipeService.deleteById(id).block();
+        recipeService.deleteById(id);
         return "redirect:/";
     }
 
@@ -59,7 +59,7 @@ public class RecipeController {
             });
             return RECIPE_RECIPEFORM_URL;
         }
-        RecipeCommand savedCommand = recipeService.saveRecipeCommand(recipeCommand);
+        RecipeCommand savedCommand = recipeService.saveRecipeCommand(recipeCommand).block();
 
         return "redirect:/recipe/" + savedCommand.getId() + "/show/";
     }

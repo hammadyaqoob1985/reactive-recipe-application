@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
@@ -35,7 +36,7 @@ public class ImageController {
 
     @GetMapping("/recipe/{recipeId}/image")
     public String getImageform(Model model, @PathVariable String recipeId) {
-        RecipeCommand recipeCommand =  recipeService.findCommandById(recipeId);
+        Mono<RecipeCommand> recipeCommand =  recipeService.findCommandById(recipeId);
         model.addAttribute("recipe", recipeCommand);
         return "/recipe/imageuploadform";
     }
@@ -50,7 +51,7 @@ public class ImageController {
 
     @GetMapping("/recipe/{recipeId}/recipeimage")
     public void renderImageFromDb(@PathVariable String recipeId, HttpServletResponse response) throws IOException {
-        RecipeCommand recipeCommand =  recipeService.findCommandById(recipeId);
+        RecipeCommand recipeCommand =  recipeService.findCommandById(recipeId).block();
 
         if(!isNull(recipeCommand.getImage())) {
             byte[] imageBytes = new byte[recipeCommand.getImage().length];

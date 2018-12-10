@@ -62,7 +62,7 @@ public class IndexControllerTest {
         recipes.add(recipe2);
 
         //set up argument captor to capture argument of type set
-        ArgumentCaptor<List<Recipe>> argumentCaptor = ArgumentCaptor.forClass(ArrayList.class);
+        ArgumentCaptor<Flux<Recipe>> argumentCaptor = ArgumentCaptor.forClass(Flux.class);
         when(recipeService.getRecipes()).thenReturn(Flux.fromIterable(recipes));
         String result = indexController.getIndexPage(model);
 
@@ -72,8 +72,8 @@ public class IndexControllerTest {
 
         assertEquals("index",result);
 
-        List<Recipe> recipeSetAddedToModel = argumentCaptor.getValue();
-        assertEquals(2, recipeSetAddedToModel.size());
+        Flux<Recipe> recipeSetAddedToModel = argumentCaptor.getValue();
+        assertEquals(2, recipeSetAddedToModel.collectList().block().size());
 
 
     }
