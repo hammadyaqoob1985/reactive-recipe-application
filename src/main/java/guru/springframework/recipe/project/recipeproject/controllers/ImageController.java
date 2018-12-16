@@ -36,7 +36,7 @@ public class ImageController {
 
     @GetMapping("/recipe/{recipeId}/image")
     public String getImageform(Model model, @PathVariable String recipeId) {
-        Mono<RecipeCommand> recipeCommand =  recipeService.findCommandById(recipeId);
+       RecipeCommand recipeCommand =  recipeService.findCommandById(recipeId).block();
         model.addAttribute("recipe", recipeCommand);
         return "/recipe/imageuploadform";
     }
@@ -44,7 +44,7 @@ public class ImageController {
     @PostMapping("/recipe/{recipeId}/image")
     public String uploadImage(@PathVariable String recipeId, @RequestParam("imagefile") MultipartFile multipartFile) {
 
-        imageService.saveImageFile(recipeId, multipartFile);
+        imageService.saveImageFile(recipeId, multipartFile).block();
 
         return "redirect:/recipe/" + recipeId + "/show/";
     }

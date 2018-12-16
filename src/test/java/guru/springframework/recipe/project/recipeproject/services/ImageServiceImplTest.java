@@ -2,12 +2,14 @@ package guru.springframework.recipe.project.recipeproject.services;
 
 import guru.springframework.recipe.project.recipeproject.domain.Recipe;
 import guru.springframework.recipe.project.recipeproject.repositories.RecipeRepository;
+import guru.springframework.recipe.project.recipeproject.repositories.reactive.RecipeReactiveRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockMultipartFile;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -19,7 +21,7 @@ import static org.mockito.Mockito.*;
 public class ImageServiceImplTest {
 
     @Mock
-    RecipeRepository recipeRepository;
+    RecipeReactiveRepository recipeRepository;
 
     ImageService imageService;
 
@@ -37,9 +39,8 @@ public class ImageServiceImplTest {
         MockMultipartFile mockMultipartFile =
                 new MockMultipartFile("imagefile", "testing.txt", "text/plain", "test".getBytes());
 
-        Optional<Recipe> recipeOptional = Optional.of(recipe);
-
-        when(recipeRepository.findById(anyString())).thenReturn(recipeOptional);
+        when(recipeRepository.findById(anyString())).thenReturn(Mono.just(recipe));
+        when(recipeRepository.save(any(Recipe.class))).thenReturn(Mono.just(recipe));
 
         imageService.saveImageFile("1", mockMultipartFile);
 
