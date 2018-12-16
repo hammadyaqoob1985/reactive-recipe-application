@@ -87,14 +87,14 @@ public class IngredientControllerTest {
 
         ingredientController.getIngredientsList(model,"1");
 
-        ArgumentCaptor<Mono<RecipeCommand>> argumentCaptorRecipeCommand = ArgumentCaptor.forClass(Mono.class);
+        ArgumentCaptor<RecipeCommand> argumentCaptorRecipeCommand = ArgumentCaptor.forClass(RecipeCommand.class);
         ArgumentCaptor<String> argumentCaptorString = ArgumentCaptor.forClass(String.class);
 
         verify(recipeService, times(1)).findCommandById(argumentCaptorString.capture());
         assertEquals(argumentCaptorString.getValue(), new String("1"));
 
         verify(model, times(1)).addAttribute(eq("recipe"), argumentCaptorRecipeCommand.capture());
-        assertEquals(argumentCaptorRecipeCommand.getValue().block(), recipeCommand);
+        assertEquals(argumentCaptorRecipeCommand.getValue(), recipeCommand);
     }
 
     @Test

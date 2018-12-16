@@ -32,7 +32,7 @@ public class IngredientController {
     @GetMapping("/recipe/{id}/ingredients")
     public String getIngredientsList(Model model, @PathVariable String id) {
         log.debug("getting Ingredients list");
-        Mono<RecipeCommand> recipeCommand = recipeService.findCommandById(id);
+        RecipeCommand recipeCommand = recipeService.findCommandById(id).block();
         model.addAttribute("recipe", recipeCommand);
         return "recipe/ingredient/list";
     }
