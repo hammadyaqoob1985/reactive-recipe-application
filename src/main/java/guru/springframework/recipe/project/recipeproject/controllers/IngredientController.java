@@ -32,14 +32,14 @@ public class IngredientController {
     @GetMapping("/recipe/{id}/ingredients")
     public String getIngredientsList(Model model, @PathVariable String id) {
         log.debug("getting Ingredients list");
-        RecipeCommand recipeCommand = recipeService.findCommandById(id).block();
+        Mono<RecipeCommand> recipeCommand = recipeService.findCommandById(id);
         model.addAttribute("recipe", recipeCommand);
         return "recipe/ingredient/list";
     }
 
     @GetMapping("/recipe/{recipeId}/ingredient/{ingredientId}/show")
     public String showIngredientForRecipe(Model model, @PathVariable String recipeId, @PathVariable String ingredientId) {
-        IngredientCommand ingredientCommand = ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId).block();
+        Mono<IngredientCommand> ingredientCommand = ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId);
         model.addAttribute("ingredient", ingredientCommand);
         return "recipe/ingredient/show";
     }
@@ -50,7 +50,7 @@ public class IngredientController {
         ingredientCommand.setRecipeId(recipeId);
         ingredientCommand.setUom(new UnitOfMeasureCommand());
         model.addAttribute("ingredient", ingredientCommand);
-        model.addAttribute("uomList", uomService.getAllUoms().collectList().block());
+        model.addAttribute("uomList", uomService.getAllUoms());
         return "recipe/ingredient/ingredientform";
     }
 
@@ -59,7 +59,7 @@ public class IngredientController {
     public String updateIngredientForRecipe(Model model, @PathVariable String recipeId, @PathVariable String ingredientId) {
         IngredientCommand ingredientCommand = ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId).block();
         model.addAttribute("ingredient", ingredientCommand);
-        model.addAttribute("uomList", uomService.getAllUoms().collectList().block());
+        model.addAttribute("uomList", uomService.getAllUoms());
         return "recipe/ingredient/ingredientform";
     }
 
