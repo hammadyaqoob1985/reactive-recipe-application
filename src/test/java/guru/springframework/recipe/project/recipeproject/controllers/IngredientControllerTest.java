@@ -241,7 +241,7 @@ public class IngredientControllerTest {
 
         when(ingredientService.saveIngredientCommand(any(IngredientCommand.class))).thenReturn(Mono.just(ingredientCommand));
 
-        String page = ingredientController.saveOrUpdate(ingredientCommand);
+        String page = ingredientController.saveOrUpdate(ingredientCommand, ingredientCommand.getRecipeId(), model);
 
         assertEquals(page, "redirect:/recipe/3/ingredient/1/show");
 

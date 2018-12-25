@@ -9,10 +9,9 @@ import guru.springframework.recipe.project.recipeproject.services.UomService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -23,10 +22,18 @@ public class IngredientController {
     IngredientService ingredientService;
     UomService uomService;
 
+    private WebDataBinder webDataBinder;
+
     public IngredientController(RecipeService recipeService, IngredientService ingredientService, UomService uomService) {
         this.recipeService = recipeService;
         this.ingredientService = ingredientService;
         this.uomService = uomService;
+    }
+
+    @InitBinder("ingredient")
+    public void initBinder(WebDataBinder webDataBinder) {
+
+        this.webDataBinder = webDataBinder;
     }
 
     @GetMapping("/recipe/{id}/ingredients")
@@ -57,6 +64,7 @@ public class IngredientController {
 
     @GetMapping("/recipe/{recipeId}/ingredient/{ingredientId}/update")
     public String updateIngredientForRecipe(Model model, @PathVariable String recipeId, @PathVariable String ingredientId) {
+
         IngredientCommand ingredientCommand = ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId).block();
         model.addAttribute("ingredient", ingredientCommand);
         model.addAttribute("uomList", uomService.getAllUoms());
@@ -64,7 +72,21 @@ public class IngredientController {
     }
 
     @PostMapping("/recipe/{recipeId}/ingredient")
-    public String saveOrUpdate(@ModelAttribute IngredientCommand command) {
+    public String saveOrUpdate(@ModelAttribute("ingredient") IngredientCommand command, @PathVariable String recipeId,
+                               Model model) {
+
+        webDataBinder.validate();
+
+        BindingResult bindingResult = webDataBinder.getBindingResult();
+
+        if(bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(error -> {
+                log.debug(error.toString());
+            });
+            model.addAttribute("uomList", uomService.getAllUoms());
+            return "recipe/ingredient/ingredientform";
+        }
+
         IngredientCommand savedCommand = ingredientService.saveIngredientCommand(command).block();
 
         log.debug("saved receipe id:" + savedCommand.getRecipeId());

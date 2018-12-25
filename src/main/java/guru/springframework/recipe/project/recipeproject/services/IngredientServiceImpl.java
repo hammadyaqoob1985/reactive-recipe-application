@@ -126,7 +126,7 @@ public class IngredientServiceImpl implements IngredientService {
             IngredientCommand ingredientCommandSaved = ingredientToIngredientCommand.convert(savedIngredientOptional.get());
             ingredientCommandSaved.setRecipeId(recipe.getId());
 
-            return Mono.just(ingredientCommand);
+            return Mono.just(ingredientCommandSaved);
         }
     }
 
