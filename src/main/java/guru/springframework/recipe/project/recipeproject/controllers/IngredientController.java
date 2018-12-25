@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -57,7 +58,6 @@ public class IngredientController {
         ingredientCommand.setRecipeId(recipeId);
         ingredientCommand.setUom(new UnitOfMeasureCommand());
         model.addAttribute("ingredient", ingredientCommand);
-        model.addAttribute("uomList", uomService.getAllUoms());
         return "recipe/ingredient/ingredientform";
     }
 
@@ -67,13 +67,11 @@ public class IngredientController {
 
         IngredientCommand ingredientCommand = ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId).block();
         model.addAttribute("ingredient", ingredientCommand);
-        model.addAttribute("uomList", uomService.getAllUoms());
         return "recipe/ingredient/ingredientform";
     }
 
     @PostMapping("/recipe/{recipeId}/ingredient")
-    public String saveOrUpdate(@ModelAttribute("ingredient") IngredientCommand command, @PathVariable String recipeId,
-                               Model model) {
+    public String saveOrUpdate(@ModelAttribute("ingredient") IngredientCommand command) {
 
         webDataBinder.validate();
 
@@ -83,7 +81,6 @@ public class IngredientController {
             bindingResult.getAllErrors().forEach(error -> {
                 log.debug(error.toString());
             });
-            model.addAttribute("uomList", uomService.getAllUoms());
             return "recipe/ingredient/ingredientform";
         }
 
@@ -99,5 +96,10 @@ public class IngredientController {
     public String deleteIngredientForRecipe(Model model, @PathVariable String recipeId, @PathVariable String ingredientId) {
         ingredientService.deleteByRecipeIdAndIngredientId(recipeId, ingredientId);
         return "redirect:/recipe/" + recipeId + "/ingredients";
+    }
+
+    @ModelAttribute("uomList")
+    public Flux<UnitOfMeasureCommand> getAllUom() {
+        return uomService.getAllUoms();
     }
 }
